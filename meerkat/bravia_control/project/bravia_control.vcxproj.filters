@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="mongoose">
+      <UniqueIdentifier>{4e7fc07d-b6ba-490f-8524-357e7bc034d6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\middleware\mongoose\mongoose.c">
+      <Filter>mongoose</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\middleware\mongoose\mongoose.h">
+      <Filter>mongoose</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
