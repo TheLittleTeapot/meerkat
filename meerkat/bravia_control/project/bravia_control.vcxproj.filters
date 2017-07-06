@@ -16,5 +16,6 @@
       <Filter>mongoose</Filter>
     </ClInclude>
     <ClInclude Include="..\include\tcp_client.h" />
+    <ClInclude Include="..\include\mg_manager.h" />
   </ItemGroup>
 </Project>
