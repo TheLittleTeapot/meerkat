@@ -15,5 +15,6 @@
     <ClInclude Include="..\..\middleware\mongoose\mongoose.h">
       <Filter>mongoose</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\tcp_client.h" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
 
+#include "../include/tcp_client.h"
+
 #include <mongoose\mongoose.h>
 #include <string>
 
@@ -68,8 +70,6 @@ private:
 			int length = *static_cast<int*>(ev_data);
 			printf("%.*s", length, nc->recv_mbuf);
 			mbuf_remove(&nc->recv_mbuf, length);
-
-			mg_send(nc, tThis.buff.c_str(), tThis.buff.size());
 		}break;    /* Data has benn received. int *num_bytes */
 		case MG_EV_SEND:
 		{
@@ -87,9 +87,16 @@ private:
 
 int main(void)
 {
-	BraviaControl bc("127.0.0.1:1234", 1234);
+	/*BraviaControl bc("127.0.0.1:1234", 1234);
 
 	int volume = 0;
 	bc.getVolume(volume);
+*/
+	TcpClient client("127.0.0.1:1234");
 
+	bool a = true;
+	while (a)
+	{
+		client.update();
+	}
 }
