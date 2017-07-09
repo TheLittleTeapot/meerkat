@@ -3,9 +3,14 @@
   <ItemGroup>
     <ClInclude Include="..\include\Test.h" />
     <ClInclude Include="..\..\middleware\mongoose\mongoose.h" />
+    <ClInclude Include="..\include\mg_manager.h" />
+    <ClInclude Include="..\include\mg_connection.h" />
+    <ClInclude Include="..\include\buffer.h" />
+    <ClInclude Include="..\include\Server.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\test.cpp" />
     <ClCompile Include="..\..\middleware\mongoose\mongoose.c" />
+    <ClCompile Include="..\src\mg_connection.cpp" />
+    <ClCompile Include="..\src\test.cpp" />
   </ItemGroup>
 </Project>

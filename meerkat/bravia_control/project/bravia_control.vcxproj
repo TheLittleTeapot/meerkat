@@ -68,14 +68,21 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)..\Build\$(Platform)_$(Configuration)</OutDir>
+    <LibraryPath>$(ProjectDir)..\..\wrapper\lib\$(platform)_$(configuration);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\middleware</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\wrapper\include;$(ProjectDir)..\..\bravia_control\include;$(ProjectDir)..\..\middleware</AdditionalIncludeDirectories>
+      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>wrapper.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -111,13 +118,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\middleware\mongoose\mongoose.c" />
+    <ClCompile Include="..\src\commands\base.cpp" />
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\middleware\mongoose\mongoose.h" />
-    <ClInclude Include="..\include\mg_manager.h" />
-    <ClInclude Include="..\include\tcp_client.h" />
+    <ClInclude Include="..\include\bravia_controller.h" />
+    <ClInclude Include="..\include\commands\base.h" />
+    <ClInclude Include="..\include\commands\command_type.h" />
+    <ClInclude Include="..\include\commands\functions.h" />
+    <ClInclude Include="..\include\commands\set_ircc_code.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
