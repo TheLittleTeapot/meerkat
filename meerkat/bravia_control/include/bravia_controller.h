@@ -39,6 +39,8 @@ namespace bravia
 					std::string str{ buff.begin(), buff.end() };
 					printf("Client received: %s\n", str.c_str());
 
+					// TODO Parse into response
+
 					cb(true);
 				};
 
