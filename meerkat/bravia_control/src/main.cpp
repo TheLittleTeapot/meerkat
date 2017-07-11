@@ -3,6 +3,7 @@
 
 #include "bravia_controller.h"
 
+
 int main(void)
 {
 	bravia::Controller bravia("192.168.1.116:20060");

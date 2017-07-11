@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\middleware\mongoose\mongoose.c" />
     <ClCompile Include="..\src\mg_connection.cpp" />
+    <ClCompile Include="..\src\server.cpp" />
     <ClCompile Include="..\src\test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

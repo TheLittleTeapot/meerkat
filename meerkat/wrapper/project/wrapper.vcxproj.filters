@@ -12,5 +12,6 @@
     <ClCompile Include="..\..\middleware\mongoose\mongoose.c" />
     <ClCompile Include="..\src\mg_connection.cpp" />
     <ClCompile Include="..\src\test.cpp" />
+    <ClCompile Include="..\src\server.cpp" />
   </ItemGroup>
 </Project>
