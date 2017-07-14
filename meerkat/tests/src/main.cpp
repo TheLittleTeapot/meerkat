@@ -1,4 +1,5 @@
 #include "mg_manager.h"
+#include "../../home_automation_server/include/utilities/autokey_cypher.h"
 
 #include <sstream>
 #include <iomanip>
@@ -6,12 +7,39 @@
 void braviaControlTest();
 void ssdpTest();
 void wifiPlug();
+void toBuffer(unsigned int value, std::vector<char>& buffer);
+std::string decryptPlugMessage(std::vector<char> buffer);
+
+std::string encrypt2(std::string& in, int keyIn);
+
+void uint32BE(const uint32_t& value,const uint32_t& base, std::vector<char>& buffer)
+{
+	int remainder = value;
+	while (remainder != 0)
+	{
+		auto remaining = (remainder / base);
+		buffer.emplace_back(remainder % base);
+		remainder = remaining;
+	}
+}
 
 int main(void)
 {
 	//ssdpTest();
 	//braviaControlTest();
-	wifiPlug();
+	//wifiPlug();
+
+	std::string theOriginalSring = "hello, World!";
+	std::string transform = theOriginalSring;
+
+	meerkat::utilities::autokeyEncrypt(transform, 171);
+	meerkat::utilities::autokeyDecrypt(transform, 171);
+
+	uint32_t length = 1045;
+	meerkat::Buffer b, c;
+	toBuffer(length, b);
+	uint32BE(length, 256, c);
+	
 }
 
 void braviaControlTest()
@@ -150,8 +178,7 @@ std::string encrypt2(std::string& in, int keyIn)
 	return output;
 }
 
-void
-toBuffer(unsigned int value, std::vector<char>& buffer)
+void toBuffer(unsigned int value, std::vector<char>& buffer)
 {
 	buffer.push_back((value >> 24) & 0xFF);
 	buffer.push_back((value >> 16) & 0xFF);
@@ -171,10 +198,33 @@ std::string makePlugMessage(std::string& in, int key)
 	return{ message.begin(), message.end() };
 }
 
+//if (typeof firstKey == = 'undefined') firstKey = 0x2B;
+//var buf = new Buffer(input); // node v6: Buffer.from(input)
+//var key = firstKey;
+//var nextKey;
+//for (var i = 0; i < buf.length; i++) {
+//	nextKey = buf[i];
+//	buf[i] = buf[i] ^ key;
+//	key = nextKey;
+//}
+//return buf;
+
 std::string decryptPlugMessage(std::vector<char> buffer)
 {
 	auto minusHeader = { buffer.begin() + 4, buffer.end() };
 
+	int key = 171;//0x2B;
+	std::string retStr;
+	int nextKey;
+
+	for (auto chr : buffer)
+	{
+		nextKey = chr;
+		retStr += chr ^ key;
+		key = nextKey;
+	}
+
+	return{};
 	
 }
 
@@ -208,7 +258,7 @@ void wifiPlug()
 		auto now = std::chrono::high_resolution_clock::now();
 		if (std::chrono::duration_cast<std::chrono::seconds>(now - then).count() > 5)
 		{
-			//std::string command = "{\"system\":{\"set_relay_state\":{\"state\":0}}}";
+			//std::string command = "{\"system\":{\"set_relay_state\":{\"state\":1}}}";
 			//std::string command = "{\"system\":{\"get_sysinfo\":{}}}";
 			std::string command = "{\"system\":{\"get_sysinfo\":null}}";
 			auto toSend = makePlugMessage(command, 171);

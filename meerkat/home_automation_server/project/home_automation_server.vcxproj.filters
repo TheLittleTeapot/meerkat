@@ -13,6 +13,9 @@
     <Filter Include="messaging">
       <UniqueIdentifier>{358b330b-85f3-4231-be43-d887deb6590e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utilities">
+      <UniqueIdentifier>{82e1e779-be59-4c5b-b4ec-4680d25b2d2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\system.h">
@@ -23,6 +26,9 @@
     </ClInclude>
     <ClInclude Include="..\include\messaging\message.h">
       <Filter>messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utilities\autokey_cypher.h">
+      <Filter>utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -119,6 +119,7 @@
     <ClInclude Include="..\include\messaging\message.h" />
     <ClInclude Include="..\include\messaging\message_listener.h" />
     <ClInclude Include="..\include\system.h" />
+    <ClInclude Include="..\include\utilities\autokey_cypher.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
