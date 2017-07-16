@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\messaging\message_dispatcher.cpp">
+      <Filter>messaging</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="systems">
@@ -29,6 +32,12 @@
     </ClInclude>
     <ClInclude Include="..\include\utilities\autokey_cypher.h">
       <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\messaging\message_dispatcher.h">
+      <Filter>messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\messaging\message_types.h">
+      <Filter>messaging</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

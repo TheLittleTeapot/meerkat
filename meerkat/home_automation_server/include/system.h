@@ -9,7 +9,8 @@
 class System : public messaging::MessageListener
 {
 public:
-	System():
+	System(messaging::MessageDispatcher& dispatcher):
+		MessageListener(dispatcher),
 		m_dead(false)
 	{
 		

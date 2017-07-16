@@ -1,5 +1,6 @@
 
 #include <system.h>
+#include <messaging/message_dispatcher.h>
 #include <messaging/message_listener.h>
 #include <messaging/message.h>
 
@@ -9,9 +10,15 @@
 class Test : public System
 {
 public:
+	Test(messaging::MessageDispatcher& dispatcher):
+		System(dispatcher)
+	{
+		dispatcher.addListener(this, { messaging::Type::Unknown });
+	}
+
 	void threadUpdate() override
 	{
-		printf(".");
+		/*printf(".");*/
 	}
 
 private:
@@ -24,7 +31,8 @@ private:
 
 int main(void)
 {
-	Test asd;
+	messaging::MessageDispatcher dispatcher;
+	Test asd(dispatcher);
 
 	asd.init();
 
@@ -36,8 +44,13 @@ int main(void)
 		std::getline(std::cin, input);
 		if (!input.empty())
 		{
+			if (input == "q")
+				break;
+
+
 			auto message = std::make_unique<messaging::Message>(messaging::Type::Unknown);
-			asd.addMessage(std::move(message));
+
+			dispatcher.dispatch(std::move(message));
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds{ 10 });

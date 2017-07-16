@@ -1,6 +1,7 @@
 #ifndef MEERKAT_MESSAGE_LISTENER_H
 #define MEERKAT_MESSAGE_LISTENER_H
 
+#include <messaging/message_dispatcher.h>
 #include <messaging\message.h>
 
 #include <mutex>
@@ -10,16 +11,22 @@
 
 namespace messaging
 {
-	using UniqueMessage = std::unique_ptr<Message>;
-
+	
 	class MessageListener
 	{
 	public:
+
+		MessageListener(MessageDispatcher& dispatcher)
+		{
+
+		}
+
 		void addMessage(UniqueMessage message)
 		{
 			std::lock_guard<std::mutex> lk(m_vectorMutex);
 			m_processQueue.push(std::move(message));
 		}
+
 	protected:
 		UniqueMessage popMessage()
 		{

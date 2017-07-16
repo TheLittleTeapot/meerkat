@@ -114,10 +114,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\messaging\message_dispatcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\messaging\message.h" />
+    <ClInclude Include="..\include\messaging\message_dispatcher.h" />
     <ClInclude Include="..\include\messaging\message_listener.h" />
+    <ClInclude Include="..\include\messaging\message_types.h" />
     <ClInclude Include="..\include\system.h" />
     <ClInclude Include="..\include\utilities\autokey_cypher.h" />
   </ItemGroup>
