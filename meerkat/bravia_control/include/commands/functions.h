@@ -5,7 +5,6 @@
 
 namespace bravia::command
 {
-
 	enum class Functions
 	{
 		Ircc,
@@ -27,7 +26,21 @@ namespace bravia::command
 
 	static std::map<Functions, const char*> functionCodes
 	{
-		{Functions::Ircc, "IRCC"}
+		{ Functions::Ircc, "IRCC" },
+		{ Functions::Power, "POWR" },
+		{ Functions::Volume, "VOLU" },
+		{ Functions::AudioMute, "AMUT" },
+		{ Functions::Channel, "CHNN" },
+		{ Functions::TripletChannel, "TCHN" },
+		{ Functions::InputSource, "ISRC" },
+		{ Functions::Input, "INPT" },
+		{ Functions::PictureMute, "PMUT" },
+		{ Functions::PictureMuteToggle, "TPMU" },
+		{ Functions::PictureInPicture, "PIPI" },
+		{ Functions::PictureInPictureToggle, "TPIP" },
+		{ Functions::PictureInPicturePositionToggle, "TPPP" },
+		{ Functions::BroadcastAddress, "BADR" },
+		{ Functions::MacAddress, "MADR" }
 	};
 
 	static const int functionLength = 4;
