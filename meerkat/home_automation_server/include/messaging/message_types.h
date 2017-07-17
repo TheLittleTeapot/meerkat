@@ -8,6 +8,10 @@ namespace messaging
 		Unknown,
 		Ping,
 		Pong,
+
+		// TV Commands
+		Set_Volume_Request,
+		Set_Volume_Response,
 	};
 }
 #endif // !MEERKAT_MESSAGING_MESSAGE_TYPES_H
