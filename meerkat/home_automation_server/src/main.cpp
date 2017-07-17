@@ -10,34 +10,38 @@
 class Test : public System
 {
 public:
-	Test(messaging::MessageDispatcher& dispatcher):
-		System(dispatcher)
-	{
-		dispatcher.addListener(this, { messaging::Type::Unknown });
-	}
+	Test() = default;
 
 	void threadUpdate() override
 	{
-		/*printf(".");*/
 	}
 
 private:
-	void handleMessage(messaging::UniqueMessage)
+	void handleMessage(messaging::SharedMessage)
 	{
-		printf("hello\n");
+		printf("ping\n");
+
+		m_listener->sendMessage(std::make_shared<messaging::Message>(messaging::Type::Pong));
 	}
 
 };
 
 int main(void)
 {
-	messaging::MessageDispatcher dispatcher;
-	Test asd(dispatcher);
+	auto dispatcher = std::make_shared<messaging::MessageDispatcher>();
+	Test asd;
 
-	asd.init();
+	asd.init(std::move(dispatcher->createListener({ messaging::Type::Ping })));
+
+	auto uniqueListener = dispatcher->createListener({ messaging::Type::Pong });
 
 	for (;;)
 	{
+		while (auto message = uniqueListener->popMessage())
+		{
+			printf("pong\n");
+		}
+
 		printf("Enter a message:\n");
 
 		std::string input;
@@ -48,9 +52,9 @@ int main(void)
 				break;
 
 
-			auto message = std::make_unique<messaging::Message>(messaging::Type::Unknown);
+			auto message = std::make_shared<messaging::Message>(messaging::Type::Ping);
 
-			dispatcher.dispatch(std::move(message));
+			dispatcher->dispatch(std::move(message));
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds{ 10 });

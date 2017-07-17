@@ -2,7 +2,7 @@
 #define MEERKAT_MESSAGE_LISTENER_H
 
 #include <messaging/message_dispatcher.h>
-#include <messaging\message.h>
+#include <messaging/message.h>
 
 #include <mutex>
 #include <memory>
@@ -16,19 +16,29 @@ namespace messaging
 	{
 	public:
 
-		MessageListener(MessageDispatcher& dispatcher)
+		MessageListener(std::shared_ptr<MessageDispatcher> dispatcher):
+			m_dispatcher(dispatcher)
 		{
 
 		}
 
-		void addMessage(UniqueMessage message)
+		void addMessage(SharedMessage message)
 		{
 			std::lock_guard<std::mutex> lk(m_vectorMutex);
 			m_processQueue.push(std::move(message));
 		}
 
-	protected:
-		UniqueMessage popMessage()
+		bool sendMessage(SharedMessage message)
+		{
+			auto shrDispatcher = m_dispatcher.lock();
+
+			if (!shrDispatcher)
+				return false;
+
+			shrDispatcher->dispatch(std::move(message));
+		}
+
+		SharedMessage popMessage()
 		{
 			std::lock_guard<std::mutex> lk(m_vectorMutex);
 
@@ -41,8 +51,10 @@ namespace messaging
 		}
 
 	private:
+		std::weak_ptr<MessageDispatcher> m_dispatcher;
+
 		std::mutex m_vectorMutex;
-		std::queue<UniqueMessage> m_processQueue;
+		std::queue<SharedMessage> m_processQueue;
 	};
 }
 

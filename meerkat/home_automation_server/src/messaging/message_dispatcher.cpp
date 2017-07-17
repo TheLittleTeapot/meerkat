@@ -3,13 +3,29 @@
 
 namespace messaging
 {
-	bool MessageDispatcher::dispatch(UniqueMessage message)
+	bool MessageDispatcher::dispatch(SharedMessage message)
 	{
-		auto& listener = m_listeners.find(message->getType());
+		auto& listenerRange = m_listeners.equal_range(message->getType());
 
-		if (listener == m_listeners.end())
+		if (listenerRange.first == m_listeners.end() &&
+			listenerRange.second == m_listeners.end())
 			return false;
 
-		listener->second->addMessage(std::move(message));
+
+		for (auto listener = listenerRange.first; listener != listenerRange.second; ++listener)
+		{
+			listener->second->addMessage(std::move(message));
+		}
+		return true;
+	}
+
+	std::unique_ptr<MessageListener> MessageDispatcher::createListener(std::initializer_list<Type> types)
+	{
+		auto newListener = std::make_unique<MessageListener>(shared_from_this());
+		for (const auto& type : types)
+		{
+			m_listeners.emplace(type, newListener.get());
+		}
+		return std::move(newListener);
 	}
 }

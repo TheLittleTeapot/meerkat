@@ -6,6 +6,8 @@ namespace messaging
 	enum class Type
 	{
 		Unknown,
+		Ping,
+		Pong,
 	};
 }
 #endif // !MEERKAT_MESSAGING_MESSAGE_TYPES_H

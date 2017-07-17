@@ -6,18 +6,18 @@
 #include <thread>
 #include <atomic>
 
-class System : public messaging::MessageListener
+class System
 {
 public:
-	System(messaging::MessageDispatcher& dispatcher):
-		MessageListener(dispatcher),
+	System():
 		m_dead(false)
 	{
 		
 	}
 
-	virtual void init()
+	virtual void init(std::unique_ptr<messaging::MessageListener> listener_ptr)
 	{
+		m_listener = std::move(listener_ptr);
 		m_thread = std::thread(&System::threadFunction, this);
 	}
 
@@ -31,7 +31,8 @@ public:
 protected:
 
 	virtual void threadUpdate() = 0;
-	virtual void handleMessage(messaging::UniqueMessage) = 0;
+	virtual void handleMessage(messaging::SharedMessage) = 0;
+	std::unique_ptr<messaging::MessageListener> m_listener;
 
 
 private:
@@ -45,9 +46,12 @@ private:
 			if (m_dead)
 				break;
 
-			auto message = std::move(popMessage());
-			if (message)
-				handleMessage(std::move(message));
+			if (m_listener)
+			{
+				auto message = m_listener->popMessage();
+				if (message)
+					handleMessage(message);
+			}
 
 			threadUpdate();
 			std::this_thread::sleep_for(std::chrono::milliseconds(10));

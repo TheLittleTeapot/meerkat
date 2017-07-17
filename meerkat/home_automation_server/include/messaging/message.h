@@ -21,7 +21,8 @@ namespace messaging
 		Type m_type;
 	};
 
-	using UniqueMessage = std::unique_ptr<Message>;
+	//using UniqueMessage = std::unique_ptr<Message>;
+	using SharedMessage = std::shared_ptr<Message>;
 }
 
 #endif // MEERKAT_MESSAGE_H

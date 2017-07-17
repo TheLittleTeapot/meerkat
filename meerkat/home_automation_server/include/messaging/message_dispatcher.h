@@ -5,25 +5,20 @@
 #include "messaging/message.h"
 
 #include <map>
+#include <memory>
 
 namespace messaging
 {
 	class MessageListener;
-	class MessageDispatcher
+
+	class MessageDispatcher : public std::enable_shared_from_this<MessageDispatcher>
 	{
 	public:
 		MessageDispatcher() = default;
 
-		bool dispatch(UniqueMessage message);
+		bool dispatch(SharedMessage message);
 
-		bool addListener(MessageListener* listener, std::initializer_list<Type> types)
-		{
-			for (const auto& type : types)
-			{
-				m_listeners.emplace(type, listener);
-			}
-			return true;
-		}
+		std::unique_ptr<MessageListener> createListener(std::initializer_list<Type> types);
 
 		bool removeListener(MessageListener* listener)
 		{
@@ -31,7 +26,9 @@ namespace messaging
 		}
 
 	private:
-		std::map<Type, MessageListener*> m_listeners;
+		//std::map<Type, MessageListener*> m_listeners;
+
+		std::multimap<Type, MessageListener*> m_listeners;
 	};
 }
 

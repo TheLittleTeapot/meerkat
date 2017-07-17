@@ -11,8 +11,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "tests\project\test
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bravia_control", "bravia_control\project\bravia_control.vcxproj", "{FF41156A-6161-4B5A-BE75-41DB7F944017}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2AED9AAF-3404-4E63-B480-7C26ADF8BA28} = {2AED9AAF-3404-4E63-B480-7C26ADF8BA28}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "home_automation_server", "home_automation_server\project\home_automation_server.vcxproj", "{7A02E51D-E887-48D0-B470-868417993D0C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2AED9AAF-3404-4E63-B480-7C26ADF8BA28} = {2AED9AAF-3404-4E63-B480-7C26ADF8BA28}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
