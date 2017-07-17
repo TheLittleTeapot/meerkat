@@ -20,9 +20,9 @@ namespace bravia
 			m_manager.poll(std::chrono::milliseconds(100));
 		}
 
-		bool setIrccCode(const int& irc_code, command::SetIrccCode::Callback cb)
+		bool setIrccCode(command::IrCode irc_code, command::SetIrccCode::Callback cb)
 		{
-			if (irc_code < 0 || irc_code  > 97)
+			if ((int)irc_code < 0 || (int)irc_code  > 97)
 				return false;
 
 			bravia::command::SetIrccCode ircCommand(cb, irc_code);

@@ -109,7 +109,6 @@ namespace meerkat
 				break;
 			case meerkat::EventType::Recv:
 			{
-				Buffer b{ 'a' };
 				Connection incomingConnection{ connection };
 
 				int bufferLength = *(int*)data;

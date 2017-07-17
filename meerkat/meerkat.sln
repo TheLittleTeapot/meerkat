@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "tests\project\test
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bravia_control", "bravia_control\project\bravia_control.vcxproj", "{FF41156A-6161-4B5A-BE75-41DB7F944017}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "home_automation_server", "home_automation_server\project\home_automation_server.vcxproj", "{7A02E51D-E887-48D0-B470-868417993D0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -44,6 +46,14 @@ Global
 		{FF41156A-6161-4B5A-BE75-41DB7F944017}.Release|x64.Build.0 = Release|x64
 		{FF41156A-6161-4B5A-BE75-41DB7F944017}.Release|x86.ActiveCfg = Release|Win32
 		{FF41156A-6161-4B5A-BE75-41DB7F944017}.Release|x86.Build.0 = Release|Win32
+		{7A02E51D-E887-48D0-B470-868417993D0C}.Debug|x64.ActiveCfg = Debug|x64
+		{7A02E51D-E887-48D0-B470-868417993D0C}.Debug|x64.Build.0 = Debug|x64
+		{7A02E51D-E887-48D0-B470-868417993D0C}.Debug|x86.ActiveCfg = Debug|Win32
+		{7A02E51D-E887-48D0-B470-868417993D0C}.Debug|x86.Build.0 = Debug|Win32
+		{7A02E51D-E887-48D0-B470-868417993D0C}.Release|x64.ActiveCfg = Release|x64
+		{7A02E51D-E887-48D0-B470-868417993D0C}.Release|x64.Build.0 = Release|x64
+		{7A02E51D-E887-48D0-B470-868417993D0C}.Release|x86.ActiveCfg = Release|Win32
+		{7A02E51D-E887-48D0-B470-868417993D0C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
