@@ -6,6 +6,7 @@
 
 void braviaControlTest();
 void ssdpTest();
+void udpDiscovery();
 void wifiPlug();
 void toBuffer(unsigned int value, std::vector<char>& buffer);
 std::string decryptPlugMessage(std::vector<char> buffer);
@@ -28,7 +29,8 @@ int main(void)
 	//ssdpTest();
 	//braviaControlTest();
 	//wifiPlug();
-
+	udpDiscovery();
+	/*
 	std::string theOriginalSring = "hello, World!";
 	std::string transform = theOriginalSring;
 
@@ -39,7 +41,7 @@ int main(void)
 	meerkat::Buffer b, c;
 	toBuffer(length, b);
 	uint32BE(length, 256, c);
-	
+	*/
 }
 
 void braviaControlTest()
@@ -123,11 +125,42 @@ void braviaControlTest()
 	}
 }
 
+void udpDiscovery()
+{
+	meerkat::Manager manager;
+	const auto wkDiscovery = manager.connect("udp://192.168.0.255:9999");
+
+	if (auto discovery = wkDiscovery.lock())
+	{
+		discovery->m_onConnect = [](int result) {printf("Connected result: %d\n", result); };
+		discovery->m_onReceive = [](meerkat::Connection& conn, const meerkat::Buffer& buff)
+		{
+			std::string str{ buff.begin(), buff.end() };
+			printf("Client received: %s\n", str.c_str());
+		};
+
+		std::string command = "{\"system\":{\"get_sysinfo\":{}}}";
+		meerkat::utilities::autokeyEncrypt(command, 171); //makePlugMessage(command, 171);
+
+		std::vector<char> message;
+		toBuffer(command.size(), message);
+
+		message.insert(message.end(), command.begin(), command.end());
+
+		discovery->send(message);
+	}
+
+	for (;;)
+	{
+		manager.poll(std::chrono::milliseconds{ 10 });
+	}
+}
+
 void ssdpTest()
 {
 	meerkat::Manager manager;
 
-	const auto wkUdp = manager.connect("udp://239.255.255.250:1900");
+	const auto wkUdp = manager.connect("udp://239.255.255.250:9999");
 
 	if (auto udpConnection = wkUdp.lock())
 	{
@@ -231,15 +264,15 @@ std::string decryptPlugMessage(std::vector<char> buffer)
 void wifiPlug()
 {
 	meerkat::Manager manager;
-
-	const auto wkClient = manager.connect("192.168.1.8:9999");
+	auto wkClient = manager.connect("192.168.1.8:9999");
 
 	if (auto sharedBraviaConnection = wkClient.lock())
 	{
 		sharedBraviaConnection->m_onConnect = [](int result) {printf("Connected result: %d\n", result); };
 		sharedBraviaConnection->m_onReceive = [](meerkat::Connection& conn, const meerkat::Buffer& buff)
 		{
-			std::string str{ buff.begin(), buff.end() };
+			std::string str{ buff.begin()+4, buff.end() };
+			meerkat::utilities::autokeyDecrypt(str, 171);
 			printf("Client received: %s\n", str.c_str());
 		};
 
@@ -255,15 +288,32 @@ void wifiPlug()
 	{
 		manager.poll(std::chrono::milliseconds{ 10 });
 
+		if(!wkClient.lock())
+			wkClient = manager.connect("192.168.1.8:9999");
+
 		auto now = std::chrono::high_resolution_clock::now();
 		if (std::chrono::duration_cast<std::chrono::seconds>(now - then).count() > 5)
 		{
-			//std::string command = "{\"system\":{\"set_relay_state\":{\"state\":1}}}";
+			static bool a = true;
+			
+			std::string command = "{\"system\":{\"set_relay_state\":{\"state\":";
+			command += a ? "1" : "0";
+			command += "}}}";
+
+			a = !a;
+
 			//std::string command = "{\"system\":{\"get_sysinfo\":{}}}";
-			std::string command = "{\"system\":{\"get_sysinfo\":null}}";
-			auto toSend = makePlugMessage(command, 171);
+			//std::string command = "{\"system\":{\"get_sysinfo\":{}}}";
+
+			meerkat::utilities::autokeyEncrypt(command, 171); //makePlugMessage(command, 171);
+
+			std::vector<char> message;
+			toBuffer(command.size(), message);
+
+			message.insert(message.end(), command.begin(), command.end());
+
 			if (auto connection = wkClient.lock())
-				connection->send(toSend);
+				connection->send(message);
 
 			then = std::chrono::high_resolution_clock::now();
 		}

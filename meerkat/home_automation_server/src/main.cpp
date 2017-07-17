@@ -1,64 +1,20 @@
-
-#include <system.h>
+#include <systems/console_input.h>
+#include <systems/bravia_control.h>
 #include <messaging/message_dispatcher.h>
-#include <messaging/message_listener.h>
-#include <messaging/message.h>
-
-#include <iostream>
-#include <string>
-
-class Test : public System
-{
-public:
-	Test() = default;
-
-	void threadUpdate() override
-	{
-	}
-
-private:
-	void handleMessage(messaging::SharedMessage)
-	{
-		printf("ping\n");
-
-		m_listener->sendMessage(std::make_shared<messaging::Message>(messaging::Type::Pong));
-	}
-
-};
 
 int main(void)
 {
 	auto dispatcher = std::make_shared<messaging::MessageDispatcher>();
-	Test asd;
 
-	asd.init(std::move(dispatcher->createListener({ messaging::Type::Ping })));
+	systems::ConsoleInput	consoleInputSystem;
+	systems::BraviaControl	braviaControlSystem;
 
-	auto uniqueListener = dispatcher->createListener({ messaging::Type::Pong });
-
+	consoleInputSystem.init(std::move(dispatcher->createListener({ messaging::Type::Set_Volume_Response })));
+	braviaControlSystem.init(std::move(dispatcher->createListener({ messaging::Type::Set_Volume_Request })));
+	
 	for (;;)
 	{
-		while (auto message = uniqueListener->popMessage())
-		{
-			printf("pong\n");
-		}
-
-		printf("Enter a message:\n");
-
-		std::string input;
-		std::getline(std::cin, input);
-		if (!input.empty())
-		{
-			if (input == "q")
-				break;
-
-
-			auto message = std::make_shared<messaging::Message>(messaging::Type::Ping);
-
-			dispatcher->dispatch(std::move(message));
-		}
-
-		std::this_thread::sleep_for(std::chrono::milliseconds{ 10 });
 	}
 
-	asd.term();
+	consoleInputSystem.term();
 }
