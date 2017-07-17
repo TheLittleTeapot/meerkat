@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\system.h">
-      <Filter>systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\messaging\message_listener.h">
       <Filter>messaging</Filter>
     </ClInclude>
@@ -37,6 +34,18 @@
       <Filter>messaging</Filter>
     </ClInclude>
     <ClInclude Include="..\include\messaging\message_types.h">
+      <Filter>messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\systems\console_input.h">
+      <Filter>systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\systems\system.h">
+      <Filter>systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\systems\bravia_control.h">
+      <Filter>systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\messaging\set_volume_request.h">
       <Filter>messaging</Filter>
     </ClInclude>
   </ItemGroup>

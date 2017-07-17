@@ -121,7 +121,10 @@
     <ClInclude Include="..\include\messaging\message_dispatcher.h" />
     <ClInclude Include="..\include\messaging\message_listener.h" />
     <ClInclude Include="..\include\messaging\message_types.h" />
-    <ClInclude Include="..\include\system.h" />
+    <ClInclude Include="..\include\messaging\set_volume_request.h" />
+    <ClInclude Include="..\include\systems\bravia_control.h" />
+    <ClInclude Include="..\include\systems\console_input.h" />
+    <ClInclude Include="..\include\systems\system.h" />
     <ClInclude Include="..\include\utilities\autokey_cypher.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
