@@ -13,7 +13,7 @@ namespace messaging
 			m_volume(volume)
 		{}
 
-		int m_volume;
+		uint32_t m_volume;
 	};
 }
 

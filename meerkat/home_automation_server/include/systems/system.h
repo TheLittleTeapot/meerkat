@@ -49,6 +49,8 @@ namespace systems
 				if (m_dead)
 					break;
 
+				threadUpdate();
+
 				if (m_listener)
 				{
 					auto message = m_listener->popMessage();
@@ -56,7 +58,7 @@ namespace systems
 						handleMessage(message);
 				}
 
-				threadUpdate();
+				
 				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 		}

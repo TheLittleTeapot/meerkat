@@ -70,6 +70,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)..\build\$(Configuration)\</OutDir>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -77,7 +78,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -113,15 +118,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\middleware\mongoose\mongoose.c" />
+    <ClCompile Include="..\src\bravia\commands\base.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\meerkat\mg_connection.cpp" />
+    <ClCompile Include="..\src\meerkat\server.cpp" />
     <ClCompile Include="..\src\messaging\message_dispatcher.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\middleware\mongoose\mongoose.h" />
+    <ClInclude Include="..\include\bravia\bravia_controller.h" />
+    <ClInclude Include="..\include\bravia\commands\base.h" />
+    <ClInclude Include="..\include\bravia\commands\command_type.h" />
+    <ClInclude Include="..\include\bravia\commands\functions.h" />
+    <ClInclude Include="..\include\bravia\commands\set_ircc_code.h" />
+    <ClInclude Include="..\include\bravia\commands\set_volume.h" />
+    <ClInclude Include="..\include\meerkat\buffer.h" />
+    <ClInclude Include="..\include\meerkat\mg_connection.h" />
+    <ClInclude Include="..\include\meerkat\mg_manager.h" />
+    <ClInclude Include="..\include\meerkat\server.h" />
     <ClInclude Include="..\include\messaging\message.h" />
     <ClInclude Include="..\include\messaging\message_dispatcher.h" />
     <ClInclude Include="..\include\messaging\message_listener.h" />
     <ClInclude Include="..\include\messaging\message_types.h" />
     <ClInclude Include="..\include\messaging\set_volume_request.h" />
+    <ClInclude Include="..\include\messaging\set_volume_response.h" />
     <ClInclude Include="..\include\systems\bravia_control.h" />
     <ClInclude Include="..\include\systems\console_input.h" />
     <ClInclude Include="..\include\systems\system.h" />

@@ -1,7 +1,7 @@
 #ifndef MEERKAT_BRVIA_CONTROLLER_H
 #define MEERKAT_BRVIA_CONTROLLER_H
 
-#include "mg_manager.h"
+#include "meerkat/mg_manager.h"
 
 #include "commands/set_ircc_code.h"
 #include "commands/set_volume.h"
@@ -63,19 +63,33 @@ namespace bravia
 			const auto weakConnection = m_manager.connect(m_host);
 			if (auto connection = weakConnection.lock())
 			{
-				connection->m_onConnect = [](int result)
+				connection->m_onConnect = [cb, weakConnection](int result)
 				{
-					printf("Connection Result: %d\n", result);
+					auto connection = weakConnection.lock();
+					if (result != 0 && connection)
+					{
+						connection->close();
+						cb(false, 0);
+					}
 				};
 
-				connection->m_onReceive = [cb](meerkat::Connection& conn, const meerkat::Buffer& buff)
+				connection->m_onReceive = [cb, volume](meerkat::Connection& conn, const meerkat::Buffer& buff)
 				{
 					std::string str{ buff.begin(), buff.end() };
-					printf("Client received: %s\n", str.c_str());
 
-					// TODO Parse into response
+					bravia::command::Type type;
+					bravia::command::Functions function;
+					if (bravia::command::getBufferInfo(buff, type, function))
+					{
+						if (type == command::Type::Answer)
+						{
 
-					cb(true, 202);
+						}
+
+						command::SetVolume::Answer answer{ buff };
+						cb(answer.m_success, volume);
+					}
+					conn.close();
 				};
 
 				connection->send(setVolumeCommand);
@@ -104,6 +118,7 @@ namespace bravia
 
 	private:
 		meerkat::Manager m_manager;
+
 		std::string m_host;
 	};
 }

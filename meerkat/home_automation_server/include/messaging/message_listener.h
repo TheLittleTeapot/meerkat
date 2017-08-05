@@ -25,7 +25,7 @@ namespace messaging
 		void addMessage(SharedMessage message)
 		{
 			std::lock_guard<std::mutex> lk(m_vectorMutex);
-			m_processQueue.push(std::move(message));
+			m_processQueue.push(message);
 		}
 
 		bool sendMessage(SharedMessage message)
@@ -35,7 +35,7 @@ namespace messaging
 			if (!shrDispatcher)
 				return false;
 
-			shrDispatcher->dispatch(std::move(message));
+			shrDispatcher->dispatch(message);
 		}
 
 		SharedMessage popMessage()
@@ -45,9 +45,9 @@ namespace messaging
 			if (m_processQueue.empty())
 				return{};
 
-			auto uniqueMessage = std::move(m_processQueue.front());
+			auto uniqueMessage = m_processQueue.front();
 			m_processQueue.pop();
-			return std::move(uniqueMessage);
+			return uniqueMessage;
 		}
 
 	private:

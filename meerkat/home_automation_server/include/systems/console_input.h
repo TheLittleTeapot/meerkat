@@ -7,6 +7,7 @@
 #include <string>
 
 #include <messaging/set_volume_request.h>
+#include <messaging/set_volume_response.h>
 
 namespace systems
 {
@@ -26,17 +27,27 @@ namespace systems
 			std::string input;
 			std::getline(std::cin, input);
 
-			if(input == "test")
-				m_listener->sendMessage(std::make_shared<messaging::SetVolumeRequest>(10));
+			if(!input.empty())
+				m_listener->sendMessage(std::make_shared<messaging::SetVolumeRequest>(std::stoi(input)));
 
 			// Parse input to message
 			
 			// Send Message
+			std::this_thread::sleep_for(std::chrono::milliseconds(16));
 		}
 
-		void handleMessage(messaging::SharedMessage) override
+		void handleMessage(messaging::SharedMessage message) override
 		{
+			auto t = message->getType();
 
+			switch (t)
+			{
+			case messaging::Type::Set_Volume_Response:
+			{
+				const auto setVolResp = std::static_pointer_cast<messaging::SetVolumeResponse>(message);
+				printf("%s\n", setVolResp->m_result == true ? "Volume was Set" : "Volume was not set");
+			}
+			}
 		}
 	};
 }

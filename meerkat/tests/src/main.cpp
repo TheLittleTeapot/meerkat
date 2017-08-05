@@ -28,8 +28,8 @@ int main(void)
 {
 	//ssdpTest();
 	//braviaControlTest();
-	//wifiPlug();
-	udpDiscovery();
+	wifiPlug();
+	//udpDiscovery();
 	/*
 	std::string theOriginalSring = "hello, World!";
 	std::string transform = theOriginalSring;
@@ -261,6 +261,18 @@ std::string decryptPlugMessage(std::vector<char> buffer)
 	
 }
 
+void onConnect(int result)
+{
+	printf("Connected result: %d\n", result);
+}
+
+void onRec(meerkat::Connection& conn, const meerkat::Buffer& buff)
+{
+	std::string str{ buff.begin() + 4, buff.end() };
+	meerkat::utilities::autokeyDecrypt(str, 171);
+	printf("Client received: %s\n", str.c_str());
+}
+
 void wifiPlug()
 {
 	meerkat::Manager manager;
@@ -268,13 +280,9 @@ void wifiPlug()
 
 	if (auto sharedBraviaConnection = wkClient.lock())
 	{
-		sharedBraviaConnection->m_onConnect = [](int result) {printf("Connected result: %d\n", result); };
-		sharedBraviaConnection->m_onReceive = [](meerkat::Connection& conn, const meerkat::Buffer& buff)
-		{
-			std::string str{ buff.begin()+4, buff.end() };
-			meerkat::utilities::autokeyDecrypt(str, 171);
-			printf("Client received: %s\n", str.c_str());
-		};
+		sharedBraviaConnection->m_onConnect = onConnect; // [](int result) {printf("Connected result: %d\n", result); };
+		sharedBraviaConnection->m_onReceive = onRec; // 
+
 
 		sharedBraviaConnection->m_onClose = []()
 		{
@@ -313,7 +321,10 @@ void wifiPlug()
 			message.insert(message.end(), command.begin(), command.end());
 
 			if (auto connection = wkClient.lock())
+			{
+				connection->m_onReceive = onRec;
 				connection->send(message);
+			}
 
 			then = std::chrono::high_resolution_clock::now();
 		}

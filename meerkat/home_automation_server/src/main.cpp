@@ -17,4 +17,5 @@ int main(void)
 	}
 
 	consoleInputSystem.term();
+	braviaControlSystem.term();
 }

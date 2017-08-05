@@ -4,6 +4,9 @@
 
 #include <systems/system.h>
 
+#include <messaging/set_volume_response.h>
+#include <bravia/bravia_controller.h>
+
 #include <iostream>
 #include <string>
 
@@ -12,12 +15,16 @@ namespace systems
 	class BraviaControl : public System
 	{
 	public:
-		BraviaControl() = default;
+		BraviaControl() :
+			m_bravia("192.168.1.116:20060") {}
 		~BraviaControl() = default;
 
 	private:
 		void threadUpdate() override
 		{
+			// Gotta update the manager!
+			m_bravia.update();
+
 			// get input
 			
 			// Parse input to message
@@ -35,10 +42,8 @@ namespace systems
 			{
 				auto setVolumeRequest = std::static_pointer_cast<messaging::SetVolumeRequest>(message);
 
-				// Better set the damn volume!
-
-				// Callback should take 'this' and send a Set_Volume_Result message
-				// Alternaitvely, we can do a bind to a member function here
+				m_bravia.setAudioVolume(setVolumeRequest->m_volume, 
+					std::bind(&BraviaControl::handleSetAudioResponse, this, std::placeholders::_1, setVolumeRequest->m_volume));
 			}
 				break;
 			default:
@@ -46,6 +51,14 @@ namespace systems
 				break;
 			}
 		}
+
+		void handleSetAudioResponse(bool success, int new_volume)
+		{
+			m_listener->sendMessage(std::make_shared<messaging::SetVolumeResponse>(success));
+		}
+
+	private:
+		bravia::Controller m_bravia;
 	};
 }
 

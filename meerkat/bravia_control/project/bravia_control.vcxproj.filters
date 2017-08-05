@@ -11,13 +11,16 @@
     <ClInclude Include="..\include\commands\base.h">
       <Filter>commands</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\commands\set_ircc_code.h">
-      <Filter>commands</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\commands\command_type.h">
       <Filter>commands</Filter>
     </ClInclude>
     <ClInclude Include="..\include\commands\functions.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\commands\set_ircc_code.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\commands\set_volume.h">
       <Filter>commands</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,19 +5,40 @@
     <ClCompile Include="..\src\messaging\message_dispatcher.cpp">
       <Filter>messaging</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\middleware\mongoose\mongoose.c">
+      <Filter>middleware</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\meerkat\mg_connection.cpp">
+      <Filter>meerkat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\meerkat\server.cpp">
+      <Filter>meerkat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bravia\commands\base.cpp">
+      <Filter>bravia\commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="systems">
       <UniqueIdentifier>{e53d3701-50d8-4600-af01-bc91411c0104}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="commands">
-      <UniqueIdentifier>{e47e2b6d-5e9c-44ca-af9f-a4646779192a}</UniqueIdentifier>
     </Filter>
     <Filter Include="messaging">
       <UniqueIdentifier>{358b330b-85f3-4231-be43-d887deb6590e}</UniqueIdentifier>
     </Filter>
     <Filter Include="utilities">
       <UniqueIdentifier>{82e1e779-be59-4c5b-b4ec-4680d25b2d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="middleware">
+      <UniqueIdentifier>{5f034522-a891-4a01-9209-fc04986fb3a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="meerkat">
+      <UniqueIdentifier>{343b15a7-8c17-4337-8ef6-677d1f893fcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bravia">
+      <UniqueIdentifier>{51a6800c-1e73-426d-ac70-f0f9fb0ee4e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bravia\commands">
+      <UniqueIdentifier>{139e344c-06bd-4783-a143-e45cda231ce4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +67,42 @@
       <Filter>systems</Filter>
     </ClInclude>
     <ClInclude Include="..\include\messaging\set_volume_request.h">
+      <Filter>messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\middleware\mongoose\mongoose.h">
+      <Filter>middleware</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\meerkat\buffer.h">
+      <Filter>meerkat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\meerkat\mg_connection.h">
+      <Filter>meerkat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\meerkat\mg_manager.h">
+      <Filter>meerkat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\meerkat\server.h">
+      <Filter>meerkat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bravia\bravia_controller.h">
+      <Filter>bravia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bravia\commands\base.h">
+      <Filter>bravia\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bravia\commands\command_type.h">
+      <Filter>bravia\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bravia\commands\functions.h">
+      <Filter>bravia\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bravia\commands\set_ircc_code.h">
+      <Filter>bravia\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bravia\commands\set_volume.h">
+      <Filter>bravia\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\messaging\set_volume_response.h">
       <Filter>messaging</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,10 +13,13 @@ namespace messaging
 	{
 	public:
 		Message(Type type): m_type(type){}
+
 		Type getType() const
 		{
 			return m_type;
 		}
+
+		int m_transactionId;
 	private:
 		Type m_type;
 	};

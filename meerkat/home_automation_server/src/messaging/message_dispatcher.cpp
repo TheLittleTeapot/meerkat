@@ -14,7 +14,7 @@ namespace messaging
 
 		for (auto listener = listenerRange.first; listener != listenerRange.second; ++listener)
 		{
-			listener->second->addMessage(std::move(message));
+			listener->second->addMessage(message);
 		}
 		return true;
 	}
