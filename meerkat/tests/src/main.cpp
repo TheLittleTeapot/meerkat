@@ -4,10 +4,14 @@
 #include <sstream>
 #include <iomanip>
 
+void findBridge();
+
 void braviaControlTest();
 void ssdpTest();
 void udpDiscovery();
 void wifiPlug();
+
+void teesst();
 void toBuffer(unsigned int value, std::vector<char>& buffer);
 std::string decryptPlugMessage(std::vector<char> buffer);
 
@@ -28,7 +32,9 @@ int main(void)
 {
 	//ssdpTest();
 	//braviaControlTest();
-	wifiPlug();
+	//wifiPlug();
+	findBridge();
+	//teesst();
 	//udpDiscovery();
 	/*
 	std::string theOriginalSring = "hello, World!";
@@ -327,6 +333,93 @@ void wifiPlug()
 			}
 
 			then = std::chrono::high_resolution_clock::now();
+		}
+	}
+}
+
+void findBridge()
+{
+
+	meerkat::Manager manager;
+	
+	auto server = manager.bind("udp://239.255.255.250:1900").lock();
+	if (server)
+	{
+		server->m_onClose = []() {printf("Closed\n"); };
+		server->m_onConnect = [](int a) {printf("%d\n", a); };
+		server->m_onReceive = [](meerkat::Connection& conn, const meerkat::Buffer& buff)
+		{
+			std::string str{ buff.begin(), buff.end() };
+			printf("RECIEVED BUFFER: %s\n", str.c_str());
+		};
+	}
+
+	const auto wkUdp = manager.connect("udp://239.255.255.250:1900");
+
+	if (auto shrUdp = wkUdp.lock())
+	{
+		shrUdp->m_onConnect = [](int a) {printf("%d\n", a); };
+		shrUdp->m_onReceive = [](meerkat::Connection& conn, const meerkat::Buffer& buff)
+		{
+			std::string str{ buff.begin(), buff.end() };
+			printf("RECIEVED BUFFER: %s\n", str.c_str());
+		};
+		shrUdp->send("M-SEARCH * HTTP/1.1\r\n"
+					"HOST: 239.255.255.250:1900\r\n"
+					"MAN: \"ssdp:discover\"\r\n"
+					"MX: 1\r\n"
+					"ST: ssdp:all\r\n");
+
+		shrUdp->send("M-SEARCH * HTTP/1.1\r\n"
+			"HOST: 239.255.255.250:1900\r\n"
+			"MAN: \"ssdp:discover\"\r\n"
+			"MX: 1\r\n"
+			"ST: ssdp:all\r\n");
+	}
+	
+	auto then = std::chrono::high_resolution_clock::now() - std::chrono::seconds{ 5 };
+	for (;;)
+	{
+		manager.poll(std::chrono::milliseconds{ 10 });
+		auto now = std::chrono::high_resolution_clock::now();
+		if (std::chrono::duration_cast<std::chrono::seconds>(now - then).count() > 5)
+		{
+			then = std::chrono::high_resolution_clock::now() - std::chrono::seconds{ 5 };
+		}
+	}
+}
+
+
+void teesst()
+{
+	meerkat::Manager manager;
+
+
+	const auto wkUdp = manager.connect("udp://239.255.255.250:1900");
+
+	if (auto shrUdp = wkUdp.lock())
+	{
+		shrUdp->m_onConnect = [](int a) {printf("%d\n", a); };
+		shrUdp->m_onReceive = [](meerkat::Connection& conn, const meerkat::Buffer& buff)
+		{
+			std::string str{ buff.begin(), buff.end() };
+			printf("RECIEVED BUFFER: %s\n", str.c_str());
+		};
+		shrUdp->send("M-SEARCH * HTTP/1.1\r\n"
+			"HOST: 239.255.255.250:1900\r\n"
+			"MAN: \"ssdp:discover\"\r\n"
+			"MX: 10\r\n"
+			"ST: ssdp:all\r\n");
+	}
+
+	auto then = std::chrono::high_resolution_clock::now() - std::chrono::seconds{ 5 };
+	for (;;)
+	{
+		manager.poll(std::chrono::milliseconds{ 10 });
+		auto now = std::chrono::high_resolution_clock::now();
+		if (std::chrono::duration_cast<std::chrono::seconds>(now - then).count() > 5)
+		{
+			then = std::chrono::high_resolution_clock::now() - std::chrono::seconds{ 5 };
 		}
 	}
 }

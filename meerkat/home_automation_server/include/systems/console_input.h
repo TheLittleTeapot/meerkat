@@ -7,7 +7,7 @@
 #include <string>
 
 #include <messaging/set_volume_request.h>
-#include <messaging/set_volume_response.h>
+#include <messaging/get_volume_request.h>
 
 namespace systems
 {
@@ -20,15 +20,22 @@ namespace systems
 	private:
 		void threadUpdate() override
 		{
-			// Ouput a message
-			std::cout << "Enter a command:" << std::endl;
-
 			// get input
 			std::string input;
 			std::getline(std::cin, input);
 
-			if(!input.empty())
-				m_listener->sendMessage(std::make_shared<messaging::SetVolumeRequest>(std::stoi(input)));
+			if (!input.empty())
+			{
+				if (*input.begin() == 'G')
+				{
+					m_listener->sendMessage(std::make_shared<messaging::GetVolumeRequest>());
+				}
+				else
+				{
+					m_listener->sendMessage(std::make_shared<messaging::SetVolumeRequest>(std::stoi(input)));
+				}
+			}
+				
 
 			// Parse input to message
 			
@@ -42,11 +49,6 @@ namespace systems
 
 			switch (t)
 			{
-			case messaging::Type::Set_Volume_Response:
-			{
-				const auto setVolResp = std::static_pointer_cast<messaging::SetVolumeResponse>(message);
-				printf("%s\n", setVolResp->m_result == true ? "Volume was Set" : "Volume was not set");
-			}
 			}
 		}
 	};

@@ -105,5 +105,14 @@
     <ClInclude Include="..\include\messaging\set_volume_response.h">
       <Filter>messaging</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\systems\systems_monitor.h">
+      <Filter>systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bravia\commands\get_volume.h">
+      <Filter>bravia\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\messaging\get_volume_request.h">
+      <Filter>messaging</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

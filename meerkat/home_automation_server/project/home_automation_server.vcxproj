@@ -131,12 +131,14 @@
     <ClInclude Include="..\include\bravia\commands\base.h" />
     <ClInclude Include="..\include\bravia\commands\command_type.h" />
     <ClInclude Include="..\include\bravia\commands\functions.h" />
+    <ClInclude Include="..\include\bravia\commands\get_volume.h" />
     <ClInclude Include="..\include\bravia\commands\set_ircc_code.h" />
     <ClInclude Include="..\include\bravia\commands\set_volume.h" />
     <ClInclude Include="..\include\meerkat\buffer.h" />
     <ClInclude Include="..\include\meerkat\mg_connection.h" />
     <ClInclude Include="..\include\meerkat\mg_manager.h" />
     <ClInclude Include="..\include\meerkat\server.h" />
+    <ClInclude Include="..\include\messaging\get_volume_request.h" />
     <ClInclude Include="..\include\messaging\message.h" />
     <ClInclude Include="..\include\messaging\message_dispatcher.h" />
     <ClInclude Include="..\include\messaging\message_listener.h" />
@@ -146,6 +148,7 @@
     <ClInclude Include="..\include\systems\bravia_control.h" />
     <ClInclude Include="..\include\systems\console_input.h" />
     <ClInclude Include="..\include\systems\system.h" />
+    <ClInclude Include="..\include\systems\systems_monitor.h" />
     <ClInclude Include="..\include\utilities\autokey_cypher.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

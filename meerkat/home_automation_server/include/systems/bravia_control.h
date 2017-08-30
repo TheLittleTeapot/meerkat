@@ -46,6 +46,13 @@ namespace systems
 					std::bind(&BraviaControl::handleSetAudioResponse, this, std::placeholders::_1, setVolumeRequest->m_volume));
 			}
 				break;
+			case messaging::Type::Get_Volume_Request:
+			{
+				auto getVolumeRequest = std::static_pointer_cast<messaging::GetVolumeRequest>(message);
+
+				m_bravia.getAudioVolume(std::bind(&BraviaControl::handleGetAudioResponse, this, std::placeholders::_1, std::placeholders::_2));
+			}
+			break;
 			default:
 				
 				break;
@@ -55,6 +62,11 @@ namespace systems
 		void handleSetAudioResponse(bool success, int new_volume)
 		{
 			m_listener->sendMessage(std::make_shared<messaging::SetVolumeResponse>(success));
+		}
+
+		void handleGetAudioResponse(bool success, int current_volume)
+		{
+			//m_listener->
 		}
 
 	private:

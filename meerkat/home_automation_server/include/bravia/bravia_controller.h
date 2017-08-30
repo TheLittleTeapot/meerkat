@@ -5,6 +5,7 @@
 
 #include "commands/set_ircc_code.h"
 #include "commands/set_volume.h"
+#include "commands/get_volume.h"
 
 namespace bravia
 {
@@ -58,7 +59,7 @@ namespace bravia
 			if (volume > 100)
 				return false;
 
-			bravia::command::SetVolume setVolumeCommand(cb, volume);
+			command::SetVolume setVolumeCommand(cb, volume);
 
 			const auto weakConnection = m_manager.connect(m_host);
 			if (auto connection = weakConnection.lock())
@@ -83,11 +84,11 @@ namespace bravia
 					{
 						if (type == command::Type::Answer)
 						{
-
+							command::SetVolume::Answer answer{ buff };
+							cb(answer.m_success, volume);
 						}
 
-						command::SetVolume::Answer answer{ buff };
-						cb(answer.m_success, volume);
+						
 					}
 					conn.close();
 				};
@@ -96,7 +97,47 @@ namespace bravia
 			}
 		}
 
-		// getAudioVolume
+		bool getAudioVolume(command::GetVolume::Callback cb)
+		{
+			command::GetVolume getVolumeCommand(cb);
+
+			const auto weakConnection = m_manager.connect(m_host);
+			if (auto connection = weakConnection.lock())
+			{
+				connection->m_onConnect = [cb, weakConnection](int result)
+				{
+					auto connection = weakConnection.lock();
+					if (result != 0 && connection)
+					{
+						connection->close();
+						cb(false, 0);
+					}
+				};
+
+				connection->m_onReceive = [cb](meerkat::Connection& conn, const meerkat::Buffer& buff)
+				{
+					std::string str{ buff.begin(), buff.end() };
+
+					bravia::command::Type type;
+					bravia::command::Functions function;
+					if (bravia::command::getBufferInfo(buff, type, function))
+					{
+						if (type == command::Type::Answer)
+						{
+							command::GetVolume::Answer answer{ buff };
+							cb(answer.m_success, answer.m_volume);
+						}
+
+
+					}
+					conn.close();
+				};
+
+				connection->send(getVolumeCommand);
+			}
+			return true;
+		}
+
 		// setAudioMute
 		// getAudioMute
 		// setChannel
