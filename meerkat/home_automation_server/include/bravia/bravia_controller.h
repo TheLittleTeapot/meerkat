@@ -6,6 +6,7 @@
 #include "commands/set_ircc_code.h"
 #include "commands/set_volume.h"
 #include "commands/get_volume.h"
+#include "commands/power.h"
 
 namespace bravia
 {
@@ -51,6 +52,30 @@ namespace bravia
 		}
 
 		// setPowerStatus
+
+		bool setPowerStatus(bool newStatus, command::SetPower::Callback cb)
+		{
+			command::SetPower setPower{ newStatus };
+
+			const auto weakConnection = m_manager.connect(m_host);
+			if (auto connection = weakConnection.lock())
+			{
+				connection->m_onConnect = [cb, weakConnection](int result)
+				{
+					auto connection = weakConnection.lock();
+					if (result != 0 && connection)
+					{
+						connection->close();
+						cb(false);
+					}
+				};
+
+				connection->send(setPower);
+				return true;
+			}
+			return false;
+		}
+
 		// getPowerStatus
 		// setAudioVolume
 

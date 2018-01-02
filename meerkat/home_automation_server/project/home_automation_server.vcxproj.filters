@@ -114,5 +114,8 @@
     <ClInclude Include="..\include\messaging\get_volume_request.h">
       <Filter>messaging</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\bravia\commands\power.h">
+      <Filter>bravia\commands</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@ namespace messaging
 		Pong,
 
 		// TV Commands
+		Set_Power_Request,
 		Set_Volume_Request,
 		Set_Volume_Response,
 		Get_Volume_Request,

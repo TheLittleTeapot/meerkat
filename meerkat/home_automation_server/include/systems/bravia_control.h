@@ -38,12 +38,21 @@ namespace systems
 
 			switch (t)
 			{
+			case messaging::Type::Set_Power_Request:
+			{
+			//auto setPowerReq = std::static_pointer_cast<messaging::
+
+				m_bravia.setPowerStatus(true, [](auto a) {printf("%d", a); });
+			}
 			case messaging::Type::Set_Volume_Request:
 			{
 				auto setVolumeRequest = std::static_pointer_cast<messaging::SetVolumeRequest>(message);
 
 				m_bravia.setAudioVolume(setVolumeRequest->m_volume, 
 					std::bind(&BraviaControl::handleSetAudioResponse, this, std::placeholders::_1, setVolumeRequest->m_volume));
+
+				//
+					
 			}
 				break;
 			case messaging::Type::Get_Volume_Request:
