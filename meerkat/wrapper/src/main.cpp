@@ -252,7 +252,7 @@ public:
 		m_volume(volume)
 	{
 		std::stringstream ss;
-		ss << std::setw(16) << std::right << std::setfill('0') << static_cast<int>(volume);
+		ss << std::setw(16) << std::right << std::setfill('0') << volume;
 		
 		std::array<char, 16> paramBuffer;
 		std::string paramStr{ ss.str() };
