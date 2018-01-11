@@ -111,10 +111,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\middleware\mongoose\mongoose.c" />
+    <ClCompile Include="src\Connection.cpp" />
+    <ClCompile Include="src\HttpClient.cpp" />
+    <ClCompile Include="src\http_server.cpp" />
+    <ClCompile Include="src\ListeningConnection.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\WebSocketServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\middleware\mongoose\mongoose.h" />
+    <ClInclude Include="include\Connection.h" />
+    <ClInclude Include="include\HttpClient.h" />
+    <ClInclude Include="include\http_server.h" />
+    <ClInclude Include="include\IncomingConnection.h" />
+    <ClInclude Include="include\ListeningConnection.h" />
+    <ClInclude Include="include\WebSocketServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

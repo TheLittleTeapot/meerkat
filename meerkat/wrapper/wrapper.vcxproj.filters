@@ -5,6 +5,11 @@
     <ClCompile Include="..\middleware\mongoose\mongoose.c">
       <Filter>middleware</Filter>
     </ClCompile>
+    <ClCompile Include="src\Connection.cpp" />
+    <ClCompile Include="src\ListeningConnection.cpp" />
+    <ClCompile Include="src\WebSocketServer.cpp" />
+    <ClCompile Include="src\http_server.cpp" />
+    <ClCompile Include="src\HttpClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="middleware">
@@ -15,5 +20,11 @@
     <ClInclude Include="..\middleware\mongoose\mongoose.h">
       <Filter>middleware</Filter>
     </ClInclude>
+    <ClInclude Include="include\Connection.h" />
+    <ClInclude Include="include\ListeningConnection.h" />
+    <ClInclude Include="include\IncomingConnection.h" />
+    <ClInclude Include="include\WebSocketServer.h" />
+    <ClInclude Include="include\http_server.h" />
+    <ClInclude Include="include\HttpClient.h" />
   </ItemGroup>
 </Project>

@@ -20,7 +20,5 @@ namespace bravia::command
 	void Base::setFunction(Functions function)
 	{
 		std::memcpy(&m_buffer[3], functionCodes[function], functionLength);
-
-
 	}
 }
