@@ -15,11 +15,15 @@
 #include <chrono>
 #include <random>
 
+#include <regex>
+
 #include "../include/ListeningConnection.h"
 #include "../include/IncomingConnection.h"
 #include "../include/WebSocketServer.h"
 #include "../include/http_server.h"
 #include "../include/HttpClient.h"
+
+#include "../../home_automation_server/include/utilities/autokey_cypher.h"
 
 class OutgoingConnection : public Connection
 {
@@ -494,6 +498,16 @@ public:
 		return true;
 	}
 
+	static std::unique_ptr<BraviaClient> create(mg_mgr& mgCon, const std::string& host)
+	{
+		const auto mgClient = mg_connect(&mgCon, host.c_str(), Connection::s_handler);
+
+		if (!mgClient)
+			return{};
+
+		return std::make_unique<BraviaClient>(*mgClient);
+	}
+
 private:
 
 	std::vector<std::pair<std::pair<BraviaCommand::CommandType, Function>, std::unique_ptr<BraviaCommand> >> m_pendingCallbacks;
@@ -599,42 +613,202 @@ public:
 		mg_mgr_poll(&m_mgMgr, millis);
 	}
 
+	operator mg_mgr&()
+	{
+		return m_mgMgr;
+	}
+
+
 private:
 	mg_mgr m_mgMgr;
 };
 
+void toBuffer(unsigned int value, std::vector<char>& buffer)
+{
+	buffer.push_back((value >> 24) & 0xFF);
+	buffer.push_back((value >> 16) & 0xFF);
+	buffer.push_back((value >> 8) & 0xFF);
+	buffer.push_back((value) & 0xFF);
+}
+
+
+class HttpRequest
+{
+public:
+
+	std::string url;
+	Method method;
+	std::map<std::string, std::string> headers;
+	std::string body;
+};
+
+const static std::map<Method, const char*> methods
+{
+	{ Method::Head, "HEAD" },
+	{ Method::Get, "GET" },
+	{ Method::Post, "POST" },
+	{ Method::Put, "PUT" },
+	{ Method::Patch, "PATCH" },
+	{ Method::Delete, "DELETE" },
+};
+
+class HttpC
+{
+public:
+	using Host = std::string;
+
+	HttpC(Manager& man):
+		m_manager(man)
+	{
+	}
+
+	bool send(const HttpRequest& request /*, and callback*/)
+	{
+		//Host host{ "example.com:80" };
+		std::regex url_regex(R"(^(([^:\/?#]+):)?(//([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)", std::regex::extended);
+		std::smatch url_match_result;
+
+		if (!std::regex_match(request.url, url_match_result, url_regex))
+		{
+			std::cerr << "Malformed url." << std::endl;
+			return false;
+		}
+		
+		std::string authority = { url_match_result[4].first, url_match_result[4].second };
+		std::string path = { url_match_result[5].first, url_match_result[5].second };
+
+		auto session = m_connections.find(authority);
+
+		mg_connection* connection = nullptr;
+		if (session != m_connections.end())
+		{
+			connection = session->second;
+		}
+		else
+		{
+			connection = mg_connect(&m_manager, authority.c_str(), s_handler);
+			connection->user_data = this;
+			mg_set_protocol_http_websocket(connection);
+			m_connections.emplace(authority, connection);
+		}
+
+		std::stringstream ss;
+		ss << methods.at(request.method) << " " << path << " HTTP/1.1\r\n";
+		ss << "Host: " << authority << "\r\n";
+
+		if (request.body.size())
+		{
+			ss << "Content-Length: " << request.body.size() << "\r\n";
+		}
+
+		ss << "\r\n";
+
+		if (request.body.size())
+		{
+			ss << request.body;
+		}
+
+		std::string str{ ss.str() };
+
+			
+		mg_send(connection, str.c_str(), str.size());
+		return true;
+	}
+
+
+private:
+	mg_mgr& m_manager;
+
+	bool removeConnection(mg_connection* connection)
+	{
+		auto findRes = std::find_if(m_connections.begin(), m_connections.end(), [connection](const std::pair<Host, mg_connection*>& pair)
+		{
+			return pair.second == connection;
+		});
+
+		if (findRes == m_connections.end())
+			return false;
+
+		return m_connections.erase(findRes->first);
+	}
+
+	static void s_handler(struct mg_connection *nc, int ev, void *ev_data)
+	{
+		if (ev == 5)
+		{
+			printf("CLOSED\n");
+			HttpC client = *static_cast<HttpC*>(nc->user_data);
+			client.removeConnection(nc);
+		}
+
+		if (ev == 101)
+		{
+			http_message& reply = *static_cast<http_message*>(ev_data);
+
+			printf("%d\n", reply.resp_code);
+
+			std::string s{ reply.body.p, reply.body.len };
+			printf("%s\n", s.c_str());
+		}
+	}
+
+	std::map<Host, mg_connection*> m_connections;
+};
+
+
 int main()
 {
+	
+
+	unsigned counter = 0;
+
+	std::string url{ "192.168.1.27/api/VPYfCwtxH3cFTphV3oIEt5Gz7fQYI6p8tNucFZoq/lights/4/state" };
+
+	std::regex url_regex(R"(^(([^:\/?#]+):)?(//([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)", std::regex::extended);
+	std::smatch url_match_result;
+
+	std::cout << "Checking: " << url << std::endl;
+
+	if (std::regex_match(url, url_match_result, url_regex)) {
+		for (const auto& res : url_match_result) {
+			std::cout << counter++ << ": " << res << std::endl;
+		}
+	}
+	else {
+		std::cerr << "Malformed url." << std::endl;
+	}
+
+
+
 	Manager manager;
 
+
+	HttpC cll{ manager };
+	HttpRequest req;
+
+	req.method = Method::Get;
+
+	//req.url = "http://192.168.1.27:80/api/VPYfCwtxH3cFTphV3oIEt5Gz7fQYI6p8tNucFZoq/lights/4/state";
+	req.url = "http://httpbin.org:80/ip";
+	//req.body = "{\"on\":false}";
+	cll.send(req);
+	
+
+	// SSDP 
+	/*
 	const auto client = manager.createClient("udp://239.255.255.250:1900");
 	client->onConnect = [](auto& connection) { printf("Connected\n"); };
-	//client->send("M-SEARCH * HTTP/1.1\r\n" 
- //             "HOST: 239.255.255.250:1900\r\n"
- //             "MAN: \"ssdp:discover\"\r\n"
- //             "MX: 5\r\n"
- //             "ST: libhue:idl\r\n");
-
 	client->send("M-SEARCH * HTTP/1.1\r\n"
 		"HOST: 239.255.255.250:1900\r\n"
 		"MAN: \"ssdp:discover\"\r\n"
 		"MX: 5\r\n"
 		"ST: ssdp:all\r\n");
 
-	/*	client->send("M-SEARCH * HTTP/1.1\r\n"
-		"HOST: 239.255.255.250:1900\r\n"
-		"MAN: \"ssdp:discover\"\r\n"
-		"MX: 5\r\n"
-		"ST: urn:schemas-upnp-org:device:Basic:1\r\n");*/
-
-
-
-	//client->onDisconnect = [](auto& connection) { printf("Disconnected\n"); };
 	client->onReceive = [](auto& con, const auto& data) {printf("%s", data.c_str()); };
+	*/
+	
+	const auto& bravia = BraviaClient::create(manager, "192.168.1.116:20060");
 
-	//client->send("*SCVOLU0000000000000008\n");
-
-	const auto bravia{ manager.braviaClient("192.168.1.116:20060") };
 	//const auto bravia{ manager.braviaClient("43.194.142.58:20060") };
 
 	/*bravia->setVolume(12,
@@ -645,20 +819,38 @@ int main()
 
 
 	auto c = manager.createWebSocketServer("6502");
-	c->onRecv = [&bravia](const auto& a)
+	c->onRecv = [&bravia](mg_connection* con, const auto& a)
 	{
-		bravia->setVolume(stoi(a), [](const auto a, const bool& b, const int& c)
+		
+		bravia->setVolume(stoi(a), [con](const auto a, const bool& b, const int& c)
 		{
+			std::stringstream ss;
+			ss << c;
+			std::string s{ ss.str() };
+			mg_connection* com = con;
+			mg_send_websocket_frame(com, WEBSOCKET_OP_TEXT, s.c_str(), s.size());
 		});
 		return "";
 	};
 
+	std::string command = "{\"system\":{\"set_relay_state\":{\"state\":";
+	command += "0";
+	command += "}}}";
 
+	auto plugClient = manager.createClient("192.168.1.8:9999");
+	meerkat::utilities::autokeyEncrypt(command, 171);
 
+	std::vector<char> sendBuffer;
+	toBuffer(command.length(), sendBuffer);
+
+	sendBuffer.insert(sendBuffer.end(), command.begin(), command.end());
+
+	std::string sendStr{ sendBuffer.begin(), sendBuffer.end() };
+	plugClient->send(sendStr);
 
 
 	auto httpClient = manager.httpClient("192.168.1.27:80");
-	//httpClient->send(HttpClient::Method::Put, "192.168.1.27", "/api/VPYfCwtxH3cFTphV3oIEt5Gz7fQYI6p8tNucFZoq/lights/4/state", "{\"on\":false}");
+	//httpClient->send(HttpClient::Method::Put, "192.168.1.27", "/api/VPYfCwtxH3cFTphV3oIEt5Gz7fQYI6p8tNucFZoq/lights/4/state", "{\"on\":true}");
 
 	static bool s_muteStatus = true;
 	auto then = std::chrono::high_resolution_clock::now();
@@ -672,6 +864,9 @@ int main()
 			std::random_device rd;  //Will be used to obtain a seed for the random number engine
 			std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
 			std::uniform_int_distribution<> dis(1, 25);
+
+
+		//	cll.send(req);
 
 			/*bravia->setVolume(dis(gen),
 				[](const auto a, const bool& b, const int& c)

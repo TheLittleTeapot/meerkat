@@ -1,5 +1,11 @@
 #include "../include/WebSocketServer.h"
 
+namespace 
+{
+	mg_connection* g_conn;
+}
+
+
 WebSocketServer::WebSocketServer(mg_connection & con):
 	Connection(con)
 {
@@ -12,43 +18,23 @@ WebSocketServer::~WebSocketServer()
 	m_connection.flags = MG_F_CLOSE_IMMEDIATELY;
 }
 
-bool WebSocketServer::send(const std::string &)
+bool WebSocketServer::broadcast(const std::string &)
 {
 	return false;
 }
 
-void WebSocketServer::eventHandler(mg_connection & mgCon, const ConnectionEvent evt, void * data)
+void WebSocketServer::eventHandler(mg_connection& mgCon, const ConnectionEvent evt, void * data)
 {
 	switch (evt)
 	{
 	case Connection::ConnectionEvent::Poll:
 		break;
-	case Connection::ConnectionEvent::Accept:
-		break;
-	
-	case Connection::ConnectionEvent::Receive:
-	{
-		int bufferLength = *(int*)data;
-		std::string buff{ mgCon.recv_mbuf.buf, mgCon.recv_mbuf.buf + bufferLength };
-		//mbuf_remove(&mgCon.recv_mbuf, bufferLength);
-		printf("RECV: %s\n", buff.c_str());
-	}
-		break;
+
 	case Connection::ConnectionEvent::Send:
 		break;
 	case Connection::ConnectionEvent::Close:
 		break;
 	case Connection::ConnectionEvent::Timer:
-		break;
-	case Connection::ConnectionEvent::Http_Request:
-		break;
-	case Connection::ConnectionEvent::Http_Reply:
-		break;
-	case Connection::ConnectionEvent::Http_Chunk:
-		break;
-	case Connection::ConnectionEvent::Ssi_Call:
-		break;
-	case Connection::ConnectionEvent::Ssi_Call_Ctx:
 		break;
 	case Connection::ConnectionEvent::Websocket_Handshake_Request:
 		break;
@@ -61,12 +47,10 @@ void WebSocketServer::eventHandler(mg_connection & mgCon, const ConnectionEvent 
 
 		if (onRecv)
 		{
-			auto retString = onRecv(dataStr);
-			mg_send_websocket_frame(&mgCon, WEBSOCKET_OP_TEXT, retString.c_str(), retString.size());
+			g_conn = &mgCon;
+			auto retString = onRecv(g_conn, dataStr);
+			//mg_send_websocket_frame(&mgCon, WEBSOCKET_OP_TEXT, retString.c_str(), retString.size());
 		}
-
-		//std::string str{ "Hello Client!" };
-		//	mg_send_websocket_frame(&mgCon, WEBSOCKET_OP_TEXT, str.c_str(), str.size());
 	}
 		break;
 	case Connection::ConnectionEvent::Websocket_Control_Frame:
